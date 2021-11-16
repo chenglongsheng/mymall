@@ -1,0 +1,31 @@
+package com.cls.mymall.coupon.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cls.mymall.common.utils.PageUtils;
+import com.cls.mymall.common.utils.Query;
+
+import com.cls.mymall.coupon.dao.CouponSpuCategoryRelationDao;
+import com.cls.mymall.coupon.entity.CouponSpuCategoryRelationEntity;
+import com.cls.mymall.coupon.service.CouponSpuCategoryRelationService;
+
+
+@Service("couponSpuCategoryRelationService")
+public class CouponSpuCategoryRelationServiceImpl extends ServiceImpl<CouponSpuCategoryRelationDao, CouponSpuCategoryRelationEntity> implements CouponSpuCategoryRelationService {
+
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        IPage<CouponSpuCategoryRelationEntity> page = this.page(
+                new Query<CouponSpuCategoryRelationEntity>().getPage(params),
+                new QueryWrapper<CouponSpuCategoryRelationEntity>()
+        );
+
+        return new PageUtils(page);
+    }
+
+}
