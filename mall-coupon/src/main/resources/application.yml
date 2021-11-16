@@ -7,9 +7,17 @@ spring:
     url: jdbc:mysql://192.168.56.10:3306/mymall_sms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: root
+  #    服务注册
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: mymall-coupon
 
 mybatis-plus:
   global-config:
     db-config:
       id-type: auto
   mapper-locations: classpath:/mapper/**/*.xml
+

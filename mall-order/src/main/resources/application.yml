@@ -7,6 +7,12 @@ spring:
     url: jdbc:mysql://192.168.56.10:3306/mymall_oms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: root
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: mymall-order
 
 mybatis-plus:
   global-config:
