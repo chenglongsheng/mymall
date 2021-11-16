@@ -11,6 +11,8 @@ bin-release/
 **/mvnw.cmd
 **/mvnw
 **/.gitignore
+**/*.iml
+**/target
 
 # Executables
 *.swf
