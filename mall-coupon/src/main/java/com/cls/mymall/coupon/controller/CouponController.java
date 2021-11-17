@@ -5,6 +5,8 @@ import com.cls.mymall.common.utils.R;
 import com.cls.mymall.coupon.entity.CouponEntity;
 import com.cls.mymall.coupon.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -18,11 +20,25 @@ import java.util.Map;
  * @email 1536463948@qq.com
  * @date 2021-11-16 11:28:06
  */
+@RefreshScope
 @RestController
 @RequestMapping("coupon/coupon")
 public class CouponController {
     @Autowired
     private CouponService couponService;
+
+    /**
+     * 测试nacos配置中心
+     */
+    @Value("${coupon.user.name}")
+    private String name;
+    @Value("${coupon.user.age}")
+    private Integer age;
+
+    @RequestMapping("/test")
+    public R test() {
+        return R.ok().put("name", name).put("age", age);
+    }
 
     /**
      * 测试feign

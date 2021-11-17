@@ -42,6 +42,7 @@
             <version>4.4.14</version>
         </dependency>
 
+        <!--    nacos服务注册/发现    -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -56,6 +57,18 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
+        <!--    nacos配置中心    -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <!--    识别bootstrap     -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
             <version>3.0.4</version>
         </dependency>
 
