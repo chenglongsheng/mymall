@@ -1,0 +1,15 @@
+server:
+  port: 89
+spring:
+  application:
+    name: mall-third-party
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    alicloud:
+      access-key: LTAI5tRUDiyFRUXY7DAsEMDH
+      secret-key: ehrYuAYOoME6kwdIx46hOeZPoRXknH
+      oss:
+        endpoint: oss-cn-shenzhen.aliyuncs.com
+        bucket: mymall-0108.oss-cn-shenzhen.aliyuncs.com
