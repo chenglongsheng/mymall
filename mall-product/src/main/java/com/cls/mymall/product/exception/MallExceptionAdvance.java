@@ -26,7 +26,8 @@ public class MallExceptionAdvance {
 
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable throwable) {
-        return null;
+        System.out.println("throwable.getMessage() = " + throwable.getMessage());
+        return R.error(BizCode.UNKNOWN_EXCEPTION.getCode(), BizCode.UNKNOWN_EXCEPTION.getMsg());
     }
 
 }
