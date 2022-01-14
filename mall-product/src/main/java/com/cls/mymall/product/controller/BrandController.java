@@ -1,19 +1,17 @@
 package com.cls.mymall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cls.mymall.product.entity.BrandEntity;
-import com.cls.mymall.product.service.BrandService;
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.R;
+import com.cls.mymall.common.valid.AddGroup;
+import com.cls.mymall.common.valid.UpdateGroup;
+import com.cls.mymall.product.entity.BrandEntity;
+import com.cls.mymall.product.service.BrandService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -57,7 +55,7 @@ public class BrandController {
      */
     @RequestMapping("/save")
 //    @RequiresPermissions("product:brand:save")
-    public R save(@RequestBody BrandEntity brand) {
+    public R save(@Validated(AddGroup.class) @RequestBody BrandEntity brand) {
         brandService.save(brand);
 
         return R.ok();
@@ -68,7 +66,7 @@ public class BrandController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("product:brand:update")
-    public R update(@RequestBody BrandEntity brand) {
+    public R update(@Validated(UpdateGroup.class) @RequestBody BrandEntity brand) {
         brandService.updateById(brand);
 
         return R.ok();
