@@ -12,4 +12,4 @@ spring:
       secret-key: ehrYuAYOoME6kwdIx46hOeZPoRXknH
       oss:
         endpoint: oss-cn-shenzhen.aliyuncs.com
-        bucket: mymall-0108.oss-cn-shenzhen.aliyuncs.com
+        bucket: mymall-0108
