@@ -36,7 +36,7 @@ public class BrandEntity implements Serializable {
     /**
      * 介绍
      */
-    private String descript;
+    private String description;
     /**
      * 显示状态[0-不显示；1-显示]
      */
