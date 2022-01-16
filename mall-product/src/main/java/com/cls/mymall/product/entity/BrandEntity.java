@@ -3,6 +3,7 @@ package com.cls.mymall.product.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cls.mymall.common.valid.AddGroup;
+import com.cls.mymall.common.valid.ListValue;
 import com.cls.mymall.common.valid.UpdateGroup;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
@@ -48,6 +49,7 @@ public class BrandEntity implements Serializable {
      * 显示状态[0-不显示；1-显示]
      */
     @NotNull(message = "状态不能为空", groups = AddGroup.class)
+    @ListValue(values = {0, 1}, groups = {AddGroup.class, UpdateGroup.class})
     private Integer showStatus;
     /**
      * 检索首字母
