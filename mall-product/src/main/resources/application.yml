@@ -25,3 +25,8 @@ mybatis-plus:
     db-config:
       id-type: auto
   mapper-locations: classpath:/mapper/**/*.xml
+
+
+logging:
+  level:
+    com.cls.mymall.product.dao: debug
