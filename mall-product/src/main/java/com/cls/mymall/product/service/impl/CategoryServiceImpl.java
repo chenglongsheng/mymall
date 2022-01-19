@@ -10,9 +10,7 @@ import com.cls.mymall.product.entity.CategoryEntity;
 import com.cls.mymall.product.service.CategoryService;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -46,6 +44,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         //TODO 防止地址引用
         baseMapper.deleteBatchIds(asList);
 
+    }
+
+    @Override
+    public Long[] getAttrGroupPath(Long catelogId) {
+        List<Long> attrGroupPath = getAttrGroupPath(catelogId, new ArrayList<>());
+        Collections.reverse(attrGroupPath);
+        return attrGroupPath.toArray(new Long[attrGroupPath.size()]);
+    }
+
+    private List<Long> getAttrGroupPath(Long catelogId, List<Long> path) {
+        CategoryEntity category = this.getById(catelogId);
+        path.add(category.getCatId());
+        if (category.getParentCid() != 0) {
+            getAttrGroupPath(category.getParentCid(), path);
+        }
+        return path;
     }
 
     /**
