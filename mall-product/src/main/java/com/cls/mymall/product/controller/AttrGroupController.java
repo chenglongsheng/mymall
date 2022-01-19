@@ -43,7 +43,7 @@ public class AttrGroupController {
     @RequestMapping("/info/{attrGroupId}")
 //    @RequiresPermissions("product:attrgroup:info")
     public R info(@PathVariable("attrGroupId") Long attrGroupId) {
-        AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
+        AttrGroupEntity attrGroup = attrGroupService.getAttrGroupInfo(attrGroupId);
 
         return R.ok().put("attrGroup", attrGroup);
     }

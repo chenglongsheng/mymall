@@ -8,6 +8,8 @@ import com.cls.mymall.common.utils.Query;
 import com.cls.mymall.product.dao.AttrGroupDao;
 import com.cls.mymall.product.entity.AttrGroupEntity;
 import com.cls.mymall.product.service.AttrGroupService;
+import com.cls.mymall.product.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -16,6 +18,9 @@ import java.util.Map;
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -46,6 +51,13 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
                                     .like("descript", key)));
         }
         return new PageUtils(page);
+    }
+
+    @Override
+    public AttrGroupEntity getAttrGroupInfo(Long attrGroupId) {
+        AttrGroupEntity attrGroup = this.getById(attrGroupId);
+        attrGroup.setCatelogPath(categoryService.getAttrGroupPath(attrGroup.getCatelogId()));
+        return attrGroup;
     }
 
 }
