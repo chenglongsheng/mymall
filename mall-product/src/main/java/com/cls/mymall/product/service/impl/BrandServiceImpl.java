@@ -8,6 +8,8 @@ import com.cls.mymall.common.utils.Query;
 import com.cls.mymall.product.dao.BrandDao;
 import com.cls.mymall.product.entity.BrandEntity;
 import com.cls.mymall.product.service.BrandService;
+import com.cls.mymall.product.service.CategoryBrandRelationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -16,6 +18,9 @@ import java.util.Map;
 
 @Service("brandService")
 public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> implements BrandService {
+
+    @Autowired
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -30,6 +35,14 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public void updateDetails(BrandEntity brand) {
+        super.updateById(brand);
+        if (!StringUtils.isEmpty(brand.getName())) {
+            categoryBrandRelationService.updateDetails(brand.getBrandId(), brand.getName());
+        }
     }
 
 }
