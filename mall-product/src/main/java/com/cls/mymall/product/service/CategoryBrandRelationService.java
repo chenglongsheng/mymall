@@ -23,5 +23,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
     void saveInfo(CategoryBrandRelationEntity categoryBrandRelation);
 
     void updateDetails(Long brandId, String name);
+
+    void updateCascade(Long catId, String name);
 }
 

@@ -7,8 +7,12 @@ import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.Query;
 import com.cls.mymall.product.dao.CategoryDao;
 import com.cls.mymall.product.entity.CategoryEntity;
+import com.cls.mymall.product.service.CategoryBrandRelationService;
 import com.cls.mymall.product.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,6 +20,9 @@ import java.util.stream.Collectors;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Autowired
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -51,6 +58,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         List<Long> attrGroupPath = getAttrGroupPath(catelogId, new ArrayList<>());
         Collections.reverse(attrGroupPath);
         return attrGroupPath.toArray(new Long[attrGroupPath.size()]);
+    }
+
+    @Transactional
+    @Override
+    public void updateDetails(CategoryEntity category) {
+        super.updateById(category);
+        if (!StringUtils.isEmpty(category.getName())) {
+            categoryBrandRelationService.updateCascade(category.getCatId(), category.getName());
+        }
     }
 
     private List<Long> getAttrGroupPath(Long catelogId, List<Long> path) {

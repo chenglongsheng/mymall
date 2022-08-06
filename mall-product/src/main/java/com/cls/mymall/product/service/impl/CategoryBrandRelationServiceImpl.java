@@ -59,4 +59,9 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
                 .eq(CategoryBrandRelationEntity::getBrandId, brandId));
     }
 
+    @Override
+    public void updateCascade(Long catId, String name) {
+        baseMapper.updateCascade(catId, name);
+    }
+
 }
