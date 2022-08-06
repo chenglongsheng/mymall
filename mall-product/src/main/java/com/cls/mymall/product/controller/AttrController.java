@@ -26,6 +26,15 @@ public class AttrController {
     private AttrService attrService;
 
     /**
+     *
+     */
+    @GetMapping("/base/list/{catId}")
+    public R baseList(@RequestParam Map<String, Object> params, @PathVariable Long catId) {
+        PageUtils page = attrService.baseList(params, catId);
+        return R.ok().put("page", page);
+    }
+
+    /**
      * 列表
      */
     @RequestMapping("/list")
