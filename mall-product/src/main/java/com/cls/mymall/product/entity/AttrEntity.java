@@ -2,11 +2,9 @@ package com.cls.mymall.product.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-
-import lombok.Data;
 
 /**
  * 商品属性
@@ -33,6 +31,10 @@ public class AttrEntity implements Serializable {
      * 是否需要检索[0-不需要，1-需要]
      */
     private Integer searchType;
+    /**
+     * 值类型[0-单选，1-多选]
+     */
+    private Integer valueType;
     /**
      * 属性图标
      */
