@@ -27,20 +27,11 @@ public class AttrController {
     private AttrService attrService;
 
     /**
-     * 获取分类销售属性
+     * 获取分类销售属性或基本属性
      */
-    @GetMapping("/sale/list/{catelogId}")
-    public R saleList(@RequestParam Map<String, Object> params, @PathVariable Long catelogId) {
-        PageUtils page = attrService.saleList(params, catelogId);
-        return R.ok().put("page", page);
-    }
-
-    /**
-     * 获取分类规格参数
-     */
-    @GetMapping("/base/list/{catId}")
-    public R baseList(@RequestParam Map<String, Object> params, @PathVariable Long catId) {
-        PageUtils page = attrService.baseList(params, catId);
+    @GetMapping("/{type}/list/{catelogId}")
+    public R saleList(@RequestParam Map<String, Object> params, @PathVariable Long catelogId, @PathVariable String type) {
+        PageUtils page = attrService.saleOrBaseList(params, catelogId, type);
         return R.ok().put("page", page);
     }
 
