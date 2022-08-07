@@ -68,22 +68,29 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     public PageUtils baseList(Map<String, Object> params, Long catId) {
 
         QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(catId != 0, AttrEntity::getCatelogId, catId);
+        queryWrapper.lambda().eq(catId != 0, AttrEntity::getCatelogId, catId)
+                .and(wrapper -> wrapper.eq(AttrEntity::getAttrType, 1)
+                        .or()
+                        .eq(AttrEntity::getAttrType, 2));
 
         String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
             queryWrapper.and((wrapper) -> wrapper.lambda().eq(AttrEntity::getAttrId, key).or().like(AttrEntity::getAttrName, key));
         }
 
-        IPage<AttrEntity> page = this.page(
+        IPage<AttrEntity> page = page(
                 new Query<AttrEntity>().getPage(params),
                 queryWrapper
         );
         PageUtils pageUtils = new PageUtils(page);
+        List<AttrRespVo> respVoList = loadAttrRespVo(page);
+        pageUtils.setList(respVoList);
+        return pageUtils;
+    }
 
+    private List<AttrRespVo> loadAttrRespVo(IPage<AttrEntity> page) {
         List<AttrEntity> list = page.getRecords();
-
-        List<AttrRespVo> respVoList = list.stream().map(attrEntity -> {
+        return list.stream().map(attrEntity -> {
             AttrRespVo attrRespVo = new AttrRespVo();
             BeanUtils.copyProperties(attrEntity, attrRespVo);
             AttrAttrgroupRelationEntity attrAttrgroupRelation = attrAttrgroupRelationService.getOne(Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
@@ -99,8 +106,6 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
             return attrRespVo;
         }).collect(Collectors.toList());
-        pageUtils.setList(respVoList);
-        return pageUtils;
     }
 
     @Override
@@ -131,6 +136,31 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                 attrAttrgroupRelation,
                 Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
                         .eq(AttrAttrgroupRelationEntity::getAttrId, attr.getAttrId()));
+    }
+
+    @Override
+    public PageUtils saleList(Map<String, Object> params, Long catelogId) {
+        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(catelogId != 0, AttrEntity::getCatelogId, catelogId)
+                .and(wrapper -> wrapper.eq(AttrEntity::getAttrType, 0).or().eq(AttrEntity::getAttrType, 2));
+
+        String key = (String) params.get("key");
+        if (!StringUtils.isEmpty(key)) {
+            queryWrapper.and(
+                    wrapper -> wrapper.lambda()
+                            .eq(AttrEntity::getAttrId, key)
+                            .or()
+                            .like(AttrEntity::getAttrName, key));
+        }
+
+        IPage<AttrEntity> page = this.page(
+                new Query<AttrEntity>().getPage(params),
+                queryWrapper
+        );
+        PageUtils pageUtils = new PageUtils(page);
+        List<AttrRespVo> attrRespVos = loadAttrRespVo(page);
+        pageUtils.setList(attrRespVos);
+        return pageUtils;
     }
 
 }
