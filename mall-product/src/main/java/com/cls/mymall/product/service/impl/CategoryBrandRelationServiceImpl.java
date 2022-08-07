@@ -11,9 +11,11 @@ import com.cls.mymall.product.entity.CategoryBrandRelationEntity;
 import com.cls.mymall.product.service.BrandService;
 import com.cls.mymall.product.service.CategoryBrandRelationService;
 import com.cls.mymall.product.service.CategoryService;
+import com.cls.mymall.product.vo.CatBrandRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +64,20 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     @Override
     public void updateCascade(Long catId, String name) {
         baseMapper.updateCascade(catId, name);
+    }
+
+    @Override
+    public List<CatBrandRelationVo> brandsList(Long catId) {
+        List<CategoryBrandRelationEntity> list = super.list(Wrappers.lambdaQuery(CategoryBrandRelationEntity.class)
+                .eq(CategoryBrandRelationEntity::getCatelogId, catId));
+        List<CatBrandRelationVo> resp = new ArrayList<>();
+        for (CategoryBrandRelationEntity relation : list) {
+            CatBrandRelationVo vo = new CatBrandRelationVo();
+            vo.setBrandId(relation.getBrandId());
+            vo.setBrandName(relation.getBrandName());
+            resp.add(vo);
+        }
+        return resp;
     }
 
 }

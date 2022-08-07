@@ -3,6 +3,7 @@ package com.cls.mymall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.product.entity.CategoryBrandRelationEntity;
+import com.cls.mymall.product.vo.CatBrandRelationVo;
 
 import java.util.List;
 import java.util.Map;
@@ -25,5 +26,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
     void updateDetails(Long brandId, String name);
 
     void updateCascade(Long catId, String name);
+
+    List<CatBrandRelationVo> brandsList(Long catId);
 }
 

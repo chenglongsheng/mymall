@@ -4,6 +4,7 @@ import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.R;
 import com.cls.mymall.product.entity.CategoryBrandRelationEntity;
 import com.cls.mymall.product.service.CategoryBrandRelationService;
+import com.cls.mymall.product.vo.CatBrandRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,15 @@ import java.util.Map;
 public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    /**
+     * 获取分类关联的品牌
+     */
+    @GetMapping("/brands/list")
+    public R brandsList(@RequestParam Long catId) {
+        List<CatBrandRelationVo> data = categoryBrandRelationService.brandsList(catId);
+        return R.ok().put("data", data);
+    }
 
     /**
      * 获取关联分类列表
