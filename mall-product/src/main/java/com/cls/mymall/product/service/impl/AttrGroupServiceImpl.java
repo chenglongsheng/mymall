@@ -18,6 +18,8 @@ import com.cls.mymall.product.service.AttrGroupService;
 import com.cls.mymall.product.service.AttrService;
 import com.cls.mymall.product.service.CategoryService;
 import com.cls.mymall.product.vo.AttrRelationDeleteVo;
+import com.cls.mymall.product.vo.WithAttrRespVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -39,6 +41,9 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Autowired
     private AttrService attrService;
+
+    @Autowired
+    private AttrGroupService attrGroupService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -132,6 +137,30 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
                     .set(AttrAttrgroupRelationEntity::getAttrGroupId, id.getAttrGroupId())
                     .eq(AttrAttrgroupRelationEntity::getAttrId, id.getAttrId()));
         }
+    }
+
+    @Override
+    public List<WithAttrRespVo> withAttr(Long catelogId) {
+        List<WithAttrRespVo> resp = new ArrayList<>();
+
+        List<AttrGroupEntity> attrGroupList = attrGroupService.list(new LambdaQueryWrapper<AttrGroupEntity>().eq(AttrGroupEntity::getCatelogId, catelogId));
+        for (AttrGroupEntity attrGroup : attrGroupList) {
+            WithAttrRespVo vo = new WithAttrRespVo();
+
+            List<AttrAttrgroupRelationEntity> relationList = attrAttrgroupRelationService.list(
+                    new LambdaQueryWrapper<AttrAttrgroupRelationEntity>()
+                            .eq(AttrAttrgroupRelationEntity::getAttrGroupId, attrGroup.getAttrGroupId())
+            );
+
+            List<Long> attrIdList = relationList.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
+            List<AttrEntity> attrs = attrService.listByIds(attrIdList);
+
+            vo.setAttrs(attrs);
+            BeanUtils.copyProperties(attrGroup, vo);
+            resp.add(vo);
+        }
+
+        return resp;
     }
 
 }

@@ -5,6 +5,7 @@ import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.entity.AttrGroupEntity;
 import com.cls.mymall.product.vo.AttrRelationDeleteVo;
+import com.cls.mymall.product.vo.WithAttrRespVo;
 
 import java.util.List;
 import java.util.Map;
@@ -31,5 +32,7 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     void attrRelationDelete(List<AttrRelationDeleteVo> ids);
 
     void attrRelation(List<AttrRelationDeleteVo> ids);
+
+    List<WithAttrRespVo> withAttr(Long catelogId);
 }
 

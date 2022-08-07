@@ -6,6 +6,7 @@ import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.entity.AttrGroupEntity;
 import com.cls.mymall.product.service.AttrGroupService;
 import com.cls.mymall.product.vo.AttrRelationDeleteVo;
+import com.cls.mymall.product.vo.WithAttrRespVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,15 @@ import java.util.Map;
 public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
+
+    /**
+     * 获取分类下所有分组&关联属性
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public R withAttr(@PathVariable Long catelogId) {
+        List<WithAttrRespVo> data = attrGroupService.withAttr(catelogId);
+        return R.ok().put("data", data);
+    }
 
     /**
      * 添加属性与分组关联关系
