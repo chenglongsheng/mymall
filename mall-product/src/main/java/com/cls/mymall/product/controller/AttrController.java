@@ -4,6 +4,7 @@ import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.R;
 import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.service.AttrService;
+import com.cls.mymall.product.vo.AttrInfoRespVo;
 import com.cls.mymall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class AttrController {
     private AttrService attrService;
 
     /**
-     *
+     * 获取分类规格参数
      */
     @GetMapping("/base/list/{catId}")
     public R baseList(@RequestParam Map<String, Object> params, @PathVariable Long catId) {
@@ -48,11 +49,12 @@ public class AttrController {
 
     /**
      * 信息
+     * 查询属性详情
      */
     @RequestMapping("/info/{attrId}")
-//    @RequiresPermissions("product:attr:info")
+    // @RequiresPermissions("product:attr:info")
     public R info(@PathVariable("attrId") Long attrId) {
-        AttrEntity attr = attrService.getById(attrId);
+        AttrInfoRespVo attr = attrService.getInfoById(attrId);
 
         return R.ok().put("attr", attr);
     }

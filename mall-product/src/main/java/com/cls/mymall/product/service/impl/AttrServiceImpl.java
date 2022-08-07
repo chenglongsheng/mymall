@@ -14,6 +14,7 @@ import com.cls.mymall.product.service.AttrAttrgroupRelationService;
 import com.cls.mymall.product.service.AttrGroupService;
 import com.cls.mymall.product.service.AttrService;
 import com.cls.mymall.product.service.CategoryService;
+import com.cls.mymall.product.vo.AttrInfoRespVo;
 import com.cls.mymall.product.vo.AttrRespVo;
 import com.cls.mymall.product.vo.AttrVo;
 import org.springframework.beans.BeanUtils;
@@ -99,6 +100,20 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }).collect(Collectors.toList());
         pageUtils.setList(respVoList);
         return pageUtils;
+    }
+
+    @Override
+    public AttrInfoRespVo getInfoById(Long attrId) {
+        AttrEntity attr = super.getById(attrId);
+        AttrInfoRespVo respVo = new AttrInfoRespVo();
+        BeanUtils.copyProperties(attr, respVo);
+        AttrAttrgroupRelationEntity relation = attrAttrgroupRelationService.getOne(Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
+                .eq(AttrAttrgroupRelationEntity::getAttrId, attrId));
+        if (relation != null) {
+            respVo.setAttrGroupId(relation.getAttrGroupId());
+        }
+        respVo.setCatelogPath(categoryService.getAttrGroupPath(attr.getCatelogId()));
+        return respVo;
     }
 
 }
