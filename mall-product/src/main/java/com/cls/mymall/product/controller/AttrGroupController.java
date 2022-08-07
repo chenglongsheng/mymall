@@ -5,6 +5,7 @@ import com.cls.mymall.common.utils.R;
 import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.entity.AttrGroupEntity;
 import com.cls.mymall.product.service.AttrGroupService;
+import com.cls.mymall.product.vo.AttrRelationDeleteVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,15 @@ import java.util.Map;
 public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
+
+    /**
+     * 删除属性与分组的关联关系
+     */
+    @PostMapping("/attr/relation/delete")
+    public R attrRelationDelete(@RequestBody List<AttrRelationDeleteVo> ids) {
+        attrGroupService.attrRelationDelete(ids);
+        return R.ok();
+    }
 
     /**
      * 获取属性分组没有关联的其他属性

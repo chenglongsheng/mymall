@@ -2,6 +2,7 @@ package com.cls.mymall.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,6 +16,7 @@ import com.cls.mymall.product.service.AttrAttrgroupRelationService;
 import com.cls.mymall.product.service.AttrGroupService;
 import com.cls.mymall.product.service.AttrService;
 import com.cls.mymall.product.service.CategoryService;
+import com.cls.mymall.product.vo.AttrRelationDeleteVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -97,6 +99,17 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         }
         IPage<AttrEntity> page = attrService.page(new Query<AttrEntity>().getPage(params), queryWrapper);
         return new PageUtils(page);
+    }
+
+    @Override
+    public void attrRelationDelete(List<AttrRelationDeleteVo> ids) {
+        for (AttrRelationDeleteVo deleteVo : ids) {
+            LambdaUpdateWrapper<AttrAttrgroupRelationEntity> updateWrapper = new LambdaUpdateWrapper<>();
+            updateWrapper.set(AttrAttrgroupRelationEntity::getAttrGroupId, null)
+                    .eq(AttrAttrgroupRelationEntity::getAttrId, deleteVo.getAttrId())
+                    .eq(AttrAttrgroupRelationEntity::getAttrGroupId, deleteVo.getAttrGroupId());
+            attrAttrgroupRelationService.update(updateWrapper);
+        }
     }
 
 }
