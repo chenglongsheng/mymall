@@ -31,7 +31,7 @@ public class AttrUpdateRespVo implements Serializable {
     /**
      * 是否可用
      */
-    private Integer enable;
+    private Long enable;
     /**
      * 图标
      */

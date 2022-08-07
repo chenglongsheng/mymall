@@ -12,7 +12,7 @@ public class AttrVo implements Serializable {
     private String attrName;//: "上市日期"
     private Integer attrType;//: 1
     private Long catelogId;//: 225
-    private Integer enable;//: 1
+    private Long enable;//: 1
     private String icon;//: "xxx"
     private Integer searchType;//: 0
     private Integer showDesc;//: 0
