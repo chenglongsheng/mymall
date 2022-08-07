@@ -79,7 +79,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     }
 
     @Override
-    public List<AttrEntity> attrRelation(Long attrgroupId) {
+    public List<AttrEntity> attrRelationList(Long attrgroupId) {
         List<AttrAttrgroupRelationEntity> list = attrAttrgroupRelationService.list(Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
                 .eq(AttrAttrgroupRelationEntity::getAttrGroupId, attrgroupId));
         List<Long> attrIds = list.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
@@ -122,6 +122,15 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
                     .eq(AttrAttrgroupRelationEntity::getAttrId, deleteVo.getAttrId())
                     .eq(AttrAttrgroupRelationEntity::getAttrGroupId, deleteVo.getAttrGroupId());
             attrAttrgroupRelationService.update(updateWrapper);
+        }
+    }
+
+    @Override
+    public void attrRelation(List<AttrRelationDeleteVo> ids) {
+        for (AttrRelationDeleteVo id : ids) {
+            attrAttrgroupRelationService.update(new LambdaUpdateWrapper<AttrAttrgroupRelationEntity>()
+                    .set(AttrAttrgroupRelationEntity::getAttrGroupId, id.getAttrGroupId())
+                    .eq(AttrAttrgroupRelationEntity::getAttrId, id.getAttrId()));
         }
     }
 

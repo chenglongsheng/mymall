@@ -24,10 +24,12 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
 
     AttrGroupEntity getAttrGroupInfo(Long attrGroupId);
 
-    List<AttrEntity> attrRelation(Long attrgroupId);
+    List<AttrEntity> attrRelationList(Long attrgroupId);
 
     PageUtils noAttrRelation(Map<String, Object> params, Long attrgroupId);
 
     void attrRelationDelete(List<AttrRelationDeleteVo> ids);
+
+    void attrRelation(List<AttrRelationDeleteVo> ids);
 }
 

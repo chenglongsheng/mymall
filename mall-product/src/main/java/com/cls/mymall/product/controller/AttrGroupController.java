@@ -28,6 +28,15 @@ public class AttrGroupController {
     private AttrGroupService attrGroupService;
 
     /**
+     * 添加属性与分组关联关系
+     */
+    @PostMapping("/attr/relation")
+    public R attrRelation(@RequestBody List<AttrRelationDeleteVo> ids) {
+        attrGroupService.attrRelation(ids);
+        return R.ok();
+    }
+
+    /**
      * 删除属性与分组的关联关系
      */
     @PostMapping("/attr/relation/delete")
@@ -49,8 +58,8 @@ public class AttrGroupController {
      * 获取属性分组的关联的所有属性
      */
     @GetMapping("/{attrgroupId}/attr/relation")
-    public R attrRelation(@PathVariable Long attrgroupId) {
-        List<AttrEntity> attrEntityList = attrGroupService.attrRelation(attrgroupId);
+    public R attrRelationList(@PathVariable Long attrgroupId) {
+        List<AttrEntity> attrEntityList = attrGroupService.attrRelationList(attrgroupId);
         return R.ok().put("data", attrEntityList);
     }
 
