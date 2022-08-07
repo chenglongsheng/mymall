@@ -98,9 +98,8 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             if (type.equals("base")) {
                 AttrAttrgroupRelationEntity attrAttrgroupRelation = attrAttrgroupRelationService.getOne(Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
                         .eq(AttrAttrgroupRelationEntity::getAttrId, attrEntity.getAttrId()));
-                if (attrAttrgroupRelation != null) {
-                    Long groupId = attrAttrgroupRelation.getAttrGroupId();
-                    attrRespVo.setGroupName(attrGroupService.getById(groupId).getAttrGroupName());
+                if (attrAttrgroupRelation.getAttrGroupId() != null) {
+                    attrRespVo.setGroupName(attrGroupService.getById(attrAttrgroupRelation.getAttrGroupId()).getAttrGroupName());
                 }
             }
             CategoryEntity category = categoryService.getById(attrEntity.getCatelogId());
