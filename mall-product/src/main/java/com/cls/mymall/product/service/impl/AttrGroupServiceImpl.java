@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cls.mymall.common.constant.ProductConstant;
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.Query;
 import com.cls.mymall.product.dao.AttrGroupDao;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,12 +88,23 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Override
     public PageUtils noAttrRelation(Map<String, Object> params, Long attrgroupId) {
+        AttrGroupEntity attrGroup = super.getById(attrgroupId);
+        Long catelogId = attrGroup.getCatelogId();
+        // 获取同一分类下的基本属性
+        List<AttrEntity> attrEntityList = attrService.list(Wrappers.lambdaQuery(AttrEntity.class)
+                .eq(catelogId != null, AttrEntity::getCatelogId, catelogId)
+                .eq(AttrEntity::getAttrType, ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()));
 
-        List<AttrAttrgroupRelationEntity> list = attrAttrgroupRelationService.list(Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
-                .eq(AttrAttrgroupRelationEntity::getAttrGroupId, null));
-        List<Long> attrIds = list.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
+        List<Long> attrIdList = attrEntityList.stream().map(AttrEntity::getAttrId).collect(Collectors.toList());
+        List<AttrAttrgroupRelationEntity> attrgroupRelationEntityList = attrAttrgroupRelationService.list(new LambdaQueryWrapper<AttrAttrgroupRelationEntity>().in(AttrAttrgroupRelationEntity::getAttrId, attrIdList));
+        List<Long> ids = new ArrayList<>();
+        for (AttrAttrgroupRelationEntity attrAttrgroupRelation : attrgroupRelationEntityList) {
+            if (attrAttrgroupRelation.getAttrGroupId() == null) {
+                ids.add(attrAttrgroupRelation.getAttrId());
+            }
+        }
         LambdaQueryWrapper<AttrEntity> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AttrEntity::getAttrId, attrIds);
+        queryWrapper.in(AttrEntity::getAttrId, ids);
 
         String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
