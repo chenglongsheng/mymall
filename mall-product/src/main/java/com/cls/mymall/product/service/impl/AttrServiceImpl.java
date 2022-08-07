@@ -133,14 +133,15 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrEntity attrEntity = new AttrEntity();
         BeanUtils.copyProperties(attr, attrEntity);
         super.updateById(attrEntity);
-
-        Long attrGroupId = attr.getAttrGroupId();
-        AttrAttrgroupRelationEntity attrAttrgroupRelation = new AttrAttrgroupRelationEntity();
-        attrAttrgroupRelation.setAttrGroupId(attrGroupId);
-        attrAttrgroupRelationService.update(
-                attrAttrgroupRelation,
-                Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
-                        .eq(AttrAttrgroupRelationEntity::getAttrId, attr.getAttrId()));
+        if (attr.getAttrType().equals(ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode())) {
+            Long attrGroupId = attr.getAttrGroupId();
+            AttrAttrgroupRelationEntity attrAttrgroupRelation = new AttrAttrgroupRelationEntity();
+            attrAttrgroupRelation.setAttrGroupId(attrGroupId);
+            attrAttrgroupRelationService.update(
+                    attrAttrgroupRelation,
+                    Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
+                            .eq(AttrAttrgroupRelationEntity::getAttrId, attr.getAttrId()));
+        }
     }
 
 }
