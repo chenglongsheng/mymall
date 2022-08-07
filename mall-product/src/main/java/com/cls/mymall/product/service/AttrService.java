@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.vo.AttrInfoRespVo;
+import com.cls.mymall.product.vo.AttrUpdateRespVo;
 import com.cls.mymall.product.vo.AttrVo;
 
 import java.util.Map;
@@ -24,5 +25,7 @@ public interface AttrService extends IService<AttrEntity> {
     PageUtils baseList(Map<String, Object> params, Long catId);
 
     AttrInfoRespVo getInfoById(Long attrId);
+
+    void updateAttr(AttrUpdateRespVo attr);
 }
 

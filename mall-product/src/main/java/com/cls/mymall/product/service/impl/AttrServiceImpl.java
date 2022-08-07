@@ -16,6 +16,7 @@ import com.cls.mymall.product.service.AttrService;
 import com.cls.mymall.product.service.CategoryService;
 import com.cls.mymall.product.vo.AttrInfoRespVo;
 import com.cls.mymall.product.vo.AttrRespVo;
+import com.cls.mymall.product.vo.AttrUpdateRespVo;
 import com.cls.mymall.product.vo.AttrVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +115,22 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }
         respVo.setCatelogPath(categoryService.getAttrGroupPath(attr.getCatelogId()));
         return respVo;
+    }
+
+    @Transactional
+    @Override
+    public void updateAttr(AttrUpdateRespVo attr) {
+        AttrEntity attrEntity = new AttrEntity();
+        BeanUtils.copyProperties(attr, attrEntity);
+        super.updateById(attrEntity);
+
+        Long attrGroupId = attr.getAttrGroupId();
+        AttrAttrgroupRelationEntity attrAttrgroupRelation = new AttrAttrgroupRelationEntity();
+        attrAttrgroupRelation.setAttrGroupId(attrGroupId);
+        attrAttrgroupRelationService.update(
+                attrAttrgroupRelation,
+                Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
+                        .eq(AttrAttrgroupRelationEntity::getAttrId, attr.getAttrId()));
     }
 
 }

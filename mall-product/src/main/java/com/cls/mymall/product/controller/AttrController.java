@@ -2,9 +2,9 @@ package com.cls.mymall.product.controller;
 
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.R;
-import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.service.AttrService;
 import com.cls.mymall.product.vo.AttrInfoRespVo;
+import com.cls.mymall.product.vo.AttrUpdateRespVo;
 import com.cls.mymall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -75,8 +75,8 @@ public class AttrController {
      */
     @RequestMapping("/update")
 //    @RequiresPermissions("product:attr:update")
-    public R update(@RequestBody AttrEntity attr) {
-        attrService.updateById(attr);
+    public R update(@RequestBody AttrUpdateRespVo attr) {
+        attrService.updateAttr(attr);
 
         return R.ok();
     }
