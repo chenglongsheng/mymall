@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -57,11 +58,13 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrEntity entity = new AttrEntity();
         BeanUtils.copyProperties(attr, entity);
         super.save(entity);
-
-        AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
-        relationEntity.setAttrId(entity.getAttrId());
-        relationEntity.setAttrGroupId(attr.getAttrGroupId());
-        attrAttrgroupRelationService.save(relationEntity);
+        // 基本属性保存关联关系
+        if (Objects.equals(entity.getAttrType(), ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode())) {
+            AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
+            relationEntity.setAttrId(entity.getAttrId());
+            relationEntity.setAttrGroupId(attr.getAttrGroupId());
+            attrAttrgroupRelationService.save(relationEntity);
+        }
     }
 
     @Override
