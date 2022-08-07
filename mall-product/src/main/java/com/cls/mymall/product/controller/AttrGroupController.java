@@ -2,12 +2,14 @@ package com.cls.mymall.product.controller;
 
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.R;
+import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.entity.AttrGroupEntity;
 import com.cls.mymall.product.service.AttrGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -23,6 +25,17 @@ import java.util.Map;
 public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
+
+//    /product/attrgroup/{attrgroupId}/attr/relation
+
+    /**
+     * 获取属性分组的关联的所有属性
+     */
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public R attrRelation(@PathVariable Long attrgroupId) {
+        List<AttrEntity> attrEntityList = attrGroupService.attrRelation(attrgroupId);
+        return R.ok().put("data", attrEntityList);
+    }
 
     /**
      * 列表

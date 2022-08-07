@@ -2,8 +2,10 @@ package com.cls.mymall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cls.mymall.common.utils.PageUtils;
+import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.entity.AttrGroupEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,5 +22,7 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     PageUtils queryPage(Map<String, Object> params, Long catelogId);
 
     AttrGroupEntity getAttrGroupInfo(Long attrGroupId);
+
+    List<AttrEntity> attrRelation(Long attrgroupId);
 }
 
