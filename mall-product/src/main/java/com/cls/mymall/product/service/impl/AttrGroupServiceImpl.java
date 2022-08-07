@@ -1,5 +1,6 @@
 package com.cls.mymall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -79,6 +80,23 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
                 .eq(AttrAttrgroupRelationEntity::getAttrGroupId, attrgroupId));
         List<Long> attrIds = list.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
         return attrService.listByIds(attrIds);
+    }
+
+    @Override
+    public PageUtils noAttrRelation(Map<String, Object> params, Long attrgroupId) {
+
+        List<AttrAttrgroupRelationEntity> list = attrAttrgroupRelationService.list(Wrappers.lambdaQuery(AttrAttrgroupRelationEntity.class)
+                .eq(AttrAttrgroupRelationEntity::getAttrGroupId, null));
+        List<Long> attrIds = list.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
+        LambdaQueryWrapper<AttrEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AttrEntity::getAttrId, attrIds);
+
+        String key = (String) params.get("key");
+        if (!StringUtils.isEmpty(key)) {
+            queryWrapper.and(wrapper -> wrapper.eq(AttrEntity::getAttrId, key).or().like(AttrEntity::getAttrName, key));
+        }
+        IPage<AttrEntity> page = attrService.page(new Query<AttrEntity>().getPage(params), queryWrapper);
+        return new PageUtils(page);
     }
 
 }

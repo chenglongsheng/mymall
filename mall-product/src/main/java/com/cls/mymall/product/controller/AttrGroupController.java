@@ -26,7 +26,14 @@ public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
 
-//    /product/attrgroup/{attrgroupId}/attr/relation
+    /**
+     * 获取属性分组没有关联的其他属性
+     */
+    @GetMapping("/{attrgroupId}/noattr/relation")
+    public R noAttrRelation(@RequestParam Map<String, Object> params, @PathVariable Long attrgroupId) {
+        PageUtils page = attrGroupService.noAttrRelation(params, attrgroupId);
+        return R.ok().put("page", page);
+    }
 
     /**
      * 获取属性分组的关联的所有属性
