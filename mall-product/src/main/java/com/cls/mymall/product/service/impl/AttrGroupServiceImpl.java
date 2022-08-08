@@ -22,6 +22,7 @@ import com.cls.mymall.product.vo.WithAttrRespVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -153,9 +154,10 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             );
 
             List<Long> attrIdList = relationList.stream().map(AttrAttrgroupRelationEntity::getAttrId).collect(Collectors.toList());
-            List<AttrEntity> attrs = attrService.listByIds(attrIdList);
-
-            vo.setAttrs(attrs);
+            if (!CollectionUtils.isEmpty(attrIdList)) {
+                List<AttrEntity> attrs = attrService.listByIds(attrIdList);
+                vo.setAttrs(attrs);
+            }
             BeanUtils.copyProperties(attrGroup, vo);
             resp.add(vo);
         }
