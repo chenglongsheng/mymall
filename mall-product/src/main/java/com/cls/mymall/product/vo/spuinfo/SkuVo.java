@@ -14,7 +14,7 @@ public class SkuVo implements Serializable {
 
     private String skuName;
 
-    private String price;
+    private BigDecimal price;
 
     private String skuTitle;
 
@@ -30,9 +30,9 @@ public class SkuVo implements Serializable {
 
     private Integer countStatus;
 
-    private Integer fullPrice;
+    private BigDecimal fullPrice;
 
-    private Integer reducePrice;
+    private BigDecimal reducePrice;
 
     private Integer priceStatus;
 

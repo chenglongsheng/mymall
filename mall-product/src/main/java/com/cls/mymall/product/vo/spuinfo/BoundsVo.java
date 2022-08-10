@@ -3,6 +3,7 @@ package com.cls.mymall.product.vo.spuinfo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class BoundsVo implements Serializable {
@@ -11,10 +12,10 @@ public class BoundsVo implements Serializable {
     /**
      * 金币
      */
-    private Integer buyBounds;
+    private BigDecimal buyBounds;
     /**
      * 成长值
      */
-    private Integer growBounds;
+    private BigDecimal growBounds;
 
 }
