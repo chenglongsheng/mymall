@@ -1,6 +1,7 @@
 package com.cls.mymall.product.feign;
 
 import com.cls.mymall.common.utils.R;
+import com.cls.mymall.coupon.entity.MemberPriceEntity;
 import com.cls.mymall.coupon.entity.SkuFullReductionEntity;
 import com.cls.mymall.coupon.entity.SkuLadderEntity;
 import com.cls.mymall.coupon.entity.SpuBoundsEntity;
@@ -19,5 +20,8 @@ public interface CouponFeignService {
 
     @RequestMapping("coupon/skufullreduction/save")
     R save(@RequestBody SkuFullReductionEntity skuFullReduction);
+
+    @RequestMapping("coupon/memberprice/save")
+    R save(@RequestBody MemberPriceEntity memberPrice);
 
 }
