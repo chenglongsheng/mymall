@@ -236,4 +236,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         }
     }
 
+    @Override
+    public void up(Long spuId) {
+        SpuInfoEntity spuInfoEntity = new SpuInfoEntity();
+        spuInfoEntity.setId(spuId);
+        spuInfoEntity.setPublishStatus(1);
+        super.updateById(spuInfoEntity);
+    }
+
 }
