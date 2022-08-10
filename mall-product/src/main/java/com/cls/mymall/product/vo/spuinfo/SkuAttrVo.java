@@ -11,7 +11,7 @@ public class SkuAttrVo implements Serializable {
     /**
      * 属性id
      */
-    private Integer attrId;
+    private Long attrId;
     /**
      * 属性名
      */
