@@ -3,10 +3,12 @@ package com.cls.mymall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.product.entity.AttrEntity;
+import com.cls.mymall.product.entity.ProductAttrValueEntity;
 import com.cls.mymall.product.vo.AttrInfoRespVo;
 import com.cls.mymall.product.vo.AttrUpdateRespVo;
 import com.cls.mymall.product.vo.AttrVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,5 +30,6 @@ public interface AttrService extends IService<AttrEntity> {
 
     void updateAttr(AttrUpdateRespVo attr);
 
+    List<ProductAttrValueEntity> listForSpu(Long spuId);
 }
 

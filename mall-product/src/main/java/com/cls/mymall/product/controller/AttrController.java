@@ -2,6 +2,7 @@ package com.cls.mymall.product.controller;
 
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.R;
+import com.cls.mymall.product.entity.ProductAttrValueEntity;
 import com.cls.mymall.product.service.AttrService;
 import com.cls.mymall.product.vo.AttrInfoRespVo;
 import com.cls.mymall.product.vo.AttrUpdateRespVo;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,6 +27,15 @@ import java.util.Map;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+
+    /**
+     * 获取spu规格
+     */
+    @GetMapping("/base/listforspu/{spuId}")
+    public R listForSpu(@PathVariable Long spuId) {
+        List<ProductAttrValueEntity> data = attrService.listForSpu(spuId);
+        return R.ok().put("data", data);
+    }
 
     /**
      * 获取分类销售属性或基本属性
