@@ -1,18 +1,17 @@
 package com.cls.mymall.ware.service.impl;
 
-import org.springframework.stereotype.Service;
-
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.Query;
-
 import com.cls.mymall.ware.dao.WareSkuDao;
 import com.cls.mymall.ware.entity.WareSkuEntity;
 import com.cls.mymall.ware.service.WareSkuService;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import java.util.Map;
 
 
 @Service("wareSkuService")
@@ -20,9 +19,15 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        QueryWrapper<WareSkuEntity> wrapper = new QueryWrapper<>();
+        Object wareId = params.get("wareId");
+        Object skuId = params.get("skuId");
+        wrapper.lambda().eq(!ObjectUtils.isEmpty(wareId), WareSkuEntity::getWareId, wareId)
+                .eq(!ObjectUtils.isEmpty(skuId), WareSkuEntity::getSkuId, skuId);
+
         IPage<WareSkuEntity> page = this.page(
                 new Query<WareSkuEntity>().getPage(params),
-                new QueryWrapper<WareSkuEntity>()
+                wrapper
         );
 
         return new PageUtils(page);
