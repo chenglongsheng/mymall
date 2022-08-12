@@ -83,10 +83,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             queryWrapper.eq("publish_status", status);
         }
 
-        IPage<SpuInfoEntity> page = this.page(
-                new Query<SpuInfoEntity>().getPage(params),
-                queryWrapper
-        );
+        IPage<SpuInfoEntity> page = this.page(new Query<SpuInfoEntity>().getPage(params), queryWrapper);
 
         List<SpuInfoEntity> records = page.getRecords();
         List<SpuInfoVo> collect = records.stream().map(item -> {
