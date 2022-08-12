@@ -7,6 +7,7 @@ import com.cls.mymall.product.entity.ProductAttrValueEntity;
 import com.cls.mymall.product.vo.AttrInfoRespVo;
 import com.cls.mymall.product.vo.AttrUpdateRespVo;
 import com.cls.mymall.product.vo.AttrVo;
+import com.cls.mymall.product.vo.UpdateSpuAttrVo;
 
 import java.util.List;
 import java.util.Map;
@@ -31,5 +32,7 @@ public interface AttrService extends IService<AttrEntity> {
     void updateAttr(AttrUpdateRespVo attr);
 
     List<ProductAttrValueEntity> listForSpu(Long spuId);
+
+    void updateSpu(Long spuId, List<UpdateSpuAttrVo> vo);
 }
 

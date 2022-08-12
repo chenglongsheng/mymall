@@ -7,6 +7,7 @@ import com.cls.mymall.product.service.AttrService;
 import com.cls.mymall.product.vo.AttrInfoRespVo;
 import com.cls.mymall.product.vo.AttrUpdateRespVo;
 import com.cls.mymall.product.vo.AttrVo;
+import com.cls.mymall.product.vo.UpdateSpuAttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,15 @@ import java.util.Map;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+
+    /**
+     * 修改商品规格
+     */
+    @PostMapping("update/{spuId}")
+    public R updateSpu(@PathVariable Long spuId, @RequestBody List<UpdateSpuAttrVo> vo) {
+        attrService.updateSpu(spuId, vo);
+        return R.ok();
+    }
 
     /**
      * 获取spu规格

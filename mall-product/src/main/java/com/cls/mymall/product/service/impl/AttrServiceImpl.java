@@ -13,10 +13,7 @@ import com.cls.mymall.product.entity.AttrEntity;
 import com.cls.mymall.product.entity.CategoryEntity;
 import com.cls.mymall.product.entity.ProductAttrValueEntity;
 import com.cls.mymall.product.service.*;
-import com.cls.mymall.product.vo.AttrInfoRespVo;
-import com.cls.mymall.product.vo.AttrRespVo;
-import com.cls.mymall.product.vo.AttrUpdateRespVo;
-import com.cls.mymall.product.vo.AttrVo;
+import com.cls.mymall.product.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -130,6 +127,24 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Override
     public List<ProductAttrValueEntity> listForSpu(Long spuId) {
         return productAttrValueService.list(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
+    }
+
+    @Override
+    @Transactional
+    public void updateSpu(Long spuId, List<UpdateSpuAttrVo> vo) {
+        for (UpdateSpuAttrVo updateSpuAttrVo : vo) {
+            ProductAttrValueEntity entity = new ProductAttrValueEntity();
+            entity.setAttrName(updateSpuAttrVo.getAttrName());
+            entity.setAttrValue(updateSpuAttrVo.getAttrValue());
+            entity.setQuickShow(updateSpuAttrVo.getQuickShow());
+            productAttrValueService.update(entity, new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId).eq("attr_id", updateSpuAttrVo.getAttrId()));
+            AttrEntity attrEntity = new AttrEntity();
+            attrEntity.setAttrId(updateSpuAttrVo.getAttrId());
+            attrEntity.setAttrName(updateSpuAttrVo.getAttrName());
+            attrEntity.setValueSelect(updateSpuAttrVo.getAttrValue());
+            attrEntity.setShowDesc(updateSpuAttrVo.getQuickShow());
+            super.updateById(attrEntity);
+        }
     }
 
 }
