@@ -4,14 +4,14 @@ spring:
       routes:
 
         - id: product_route
-          uri: lb://mymall-product
+          uri: lb://mall-product
           predicates:
             - Path=/api/product/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /$\{segment}
 
         - id: ware_route
-          uri: lb://mymall-ware
+          uri: lb://mall-ware
           predicates:
             - Path=/api/ware/**
           filters:
@@ -25,7 +25,7 @@ spring:
             - RewritePath=/api/thirdparty/?(?<segment>.*), /$\{segment}
 
         - id: member_route
-          uri: lb://mymall-member
+          uri: lb://mall-member
           predicates:
             - Path=/api/member/**
           filters:
