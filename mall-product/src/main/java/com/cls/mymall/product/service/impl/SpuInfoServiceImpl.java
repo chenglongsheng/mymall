@@ -313,14 +313,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
      * @return List<T>
      */
     public static <T> List<T> castList(Object obj, Class<T> clazz) {
-        List<T> result = new ArrayList<>();
-        if (obj instanceof List<?>) {
-            for (Object o : (List<?>) obj) {
-                result.add(clazz.cast(o));
-            }
-            return result;
-        }
-        return null;
+        List<T> result = (List<T>) obj;
+        String s = JSON.toJSONString(result);
+        return JSON.parseArray(s, clazz);
     }
 
 }
