@@ -1,5 +1,6 @@
 package com.cls.mymall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -296,12 +297,16 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         }).collect(Collectors.toList());
 
         // 远程调用检索服务
-        searchFeignService.productStatusUp(modelList);
+        R r = searchFeignService.productStatusUp(modelList);
 
-        SpuInfoEntity spuInfoEntity = new SpuInfoEntity();
-        spuInfoEntity.setId(spuId);
-        spuInfoEntity.setPublishStatus(1);
-        super.updateById(spuInfoEntity);
+        if (r.getCode() == 0) {
+            SpuInfoEntity spuInfoEntity = new SpuInfoEntity();
+            spuInfoEntity.setId(spuId);
+            // 上架
+            spuInfoEntity.setPublishStatus(1);
+            super.updateById(spuInfoEntity);
+        }
+
     }
 
     /**
