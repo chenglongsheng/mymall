@@ -69,6 +69,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }
     }
 
+    @Override
+    public List<CategoryEntity> getLevel1Categories() {
+        return super.list(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+    }
+
     private List<Long> getAttrGroupPath(Long catelogId, List<Long> path) {
         CategoryEntity category = this.getById(catelogId);
         path.add(category.getCatId());
