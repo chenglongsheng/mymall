@@ -11,6 +11,7 @@ import com.cls.mymall.product.service.SkuInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -46,6 +47,11 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         IPage<SkuInfoEntity> page = this.page(new Query<SkuInfoEntity>().getPage(params), queryWrapper);
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<SkuInfoEntity> listBySpuId(Long spuId) {
+        return super.list(new QueryWrapper<SkuInfoEntity>().eq("spu_id", spuId));
     }
 
 }
