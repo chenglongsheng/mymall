@@ -3,8 +3,10 @@ package com.cls.mymall.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cls.mymall.common.to.es.SkuEsModel;
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.Query;
+import com.cls.mymall.common.utils.R;
 import com.cls.mymall.coupon.entity.MemberPriceEntity;
 import com.cls.mymall.coupon.entity.SkuFullReductionEntity;
 import com.cls.mymall.coupon.entity.SkuLadderEntity;
@@ -12,7 +14,10 @@ import com.cls.mymall.coupon.entity.SpuBoundsEntity;
 import com.cls.mymall.product.dao.SpuInfoDao;
 import com.cls.mymall.product.entity.*;
 import com.cls.mymall.product.feign.CouponFeignService;
+import com.cls.mymall.product.feign.SearchFeignService;
+import com.cls.mymall.product.feign.WareFeignService;
 import com.cls.mymall.product.service.*;
+import com.cls.mymall.product.vo.SkuHasStockVo;
 import com.cls.mymall.product.vo.SpuInfoVo;
 import com.cls.mymall.product.vo.spuinfo.*;
 import org.springframework.beans.BeanUtils;
@@ -21,9 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -59,6 +62,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     private SkuImagesService skuImagesService;
+
+    @Autowired
+    private WareFeignService wareFeignService;
+
+    @Autowired
+    private SearchFeignService searchFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -235,10 +244,83 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Override
     public void up(Long spuId) {
+
+        List<SkuInfoEntity> skus = skuInfoService.listBySpuId(spuId);
+
+        List<Long> skuIds = skus.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
+
+        List<ProductAttrValueEntity> attrValues = productAttrValueService.baseAttrListForSpu(spuId);
+        List<Long> attrIds = attrValues.stream().map(ProductAttrValueEntity::getAttrId).collect(Collectors.toList());
+        List<AttrEntity> attrEntities = attrService.listByIds(attrIds);
+        Set<Long> idSet = attrEntities.stream().map(AttrEntity::getAttrId).collect(Collectors.toSet());
+
+        List<SkuEsModel.Attrs> attrsList = attrValues.stream().filter(item -> idSet.contains(item.getAttrId())).map(item -> {
+            SkuEsModel.Attrs attrs = new SkuEsModel.Attrs();
+            BeanUtils.copyProperties(item, attrs);
+            return attrs;
+        }).collect(Collectors.toList());
+
+        // 远程调用
+        Map<Long, Integer> stockMap = null;
+        try {
+            R stock = wareFeignService.hasStock(skuIds);
+            Object data = stock.get("data");
+            List<SkuHasStockVo> stockVos = castList(data, SkuHasStockVo.class);
+            stockMap = stockVos.stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getStock));
+        } catch (Exception e) {
+            log.error("库存服务查询异常：原因{}", e);
+        }
+        Map<Long, Integer> finalStockMap = stockMap;
+        List<SkuEsModel> modelList = skus.stream().map(sku -> {
+            SkuEsModel model = new SkuEsModel();
+            BeanUtils.copyProperties(sku, model);
+            model.setSkuPrice(sku.getPrice());
+            model.setSkuImg(sku.getSkuDefaultImg());
+            //库存
+            if (finalStockMap == null) {
+                model.setHasStock(true);
+            } else {
+                model.setHasStock(finalStockMap.get(sku.getSkuId()) > 0);
+            }
+            model.setHotScore(0L);
+            //品牌
+            BrandEntity brand = brandService.getById(sku.getBrandId());
+            model.setBrandId(brand.getBrandId());
+            model.setBrandName(brand.getName());
+            model.setBrandImg(brand.getLogo());
+            // 分类
+            CategoryEntity category = categoryService.getById(sku.getCatalogId());
+            model.setCatalogName(category.getName());
+            model.setAttrs(attrsList);
+            return model;
+        }).collect(Collectors.toList());
+
+        // 远程调用检索服务
+        searchFeignService.productStatusUp(modelList);
+
         SpuInfoEntity spuInfoEntity = new SpuInfoEntity();
         spuInfoEntity.setId(spuId);
         spuInfoEntity.setPublishStatus(1);
         super.updateById(spuInfoEntity);
+    }
+
+    /**
+     * obj cast to list
+     *
+     * @param obj   被转换的对象
+     * @param clazz List中的类型
+     * @param <T>   泛型
+     * @return List<T>
+     */
+    public static <T> List<T> castList(Object obj, Class<T> clazz) {
+        List<T> result = new ArrayList<>();
+        if (obj instanceof List<?>) {
+            for (Object o : (List<?>) obj) {
+                result.add(clazz.cast(o));
+            }
+            return result;
+        }
+        return null;
     }
 
 }
