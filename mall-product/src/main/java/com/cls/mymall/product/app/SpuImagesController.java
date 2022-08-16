@@ -1,4 +1,4 @@
-package com.cls.mymall.product.controller;
+package com.cls.mymall.product.app;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -10,32 +10,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cls.mymall.product.entity.CommentReplayEntity;
-import com.cls.mymall.product.service.CommentReplayService;
+import com.cls.mymall.product.entity.SpuImagesEntity;
+import com.cls.mymall.product.service.SpuImagesService;
 import com.cls.mymall.common.utils.PageUtils;
 import com.cls.mymall.common.utils.R;
 
 
 /**
- * 商品评价回复关系
+ * spu图片
  *
  * @author chenglongsheng
  * @email 1536463948@qq.com
- * @date 2021-11-16 11:04:14
+ * @date 2021-11-16 11:04:15
  */
 @RestController
-@RequestMapping("product/commentreplay")
-public class CommentReplayController {
+@RequestMapping("product/spuimages")
+public class SpuImagesController {
     @Autowired
-    private CommentReplayService commentReplayService;
+    private SpuImagesService spuImagesService;
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-//    @RequiresPermissions("product:commentreplay:list")
+//    @RequiresPermissions("product:spuimages:list")
     public R list(@RequestParam Map<String, Object> params) {
-        PageUtils page = commentReplayService.queryPage(params);
+        PageUtils page = spuImagesService.queryPage(params);
 
         return R.ok().put("page", page);
     }
@@ -45,20 +45,20 @@ public class CommentReplayController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-//    @RequiresPermissions("product:commentreplay:info")
+//    @RequiresPermissions("product:spuimages:info")
     public R info(@PathVariable("id") Long id) {
-        CommentReplayEntity commentReplay = commentReplayService.getById(id);
+        SpuImagesEntity spuImages = spuImagesService.getById(id);
 
-        return R.ok().put("commentReplay", commentReplay);
+        return R.ok().put("spuImages", spuImages);
     }
 
     /**
      * 保存
      */
     @RequestMapping("/save")
-//    @RequiresPermissions("product:commentreplay:save")
-    public R save(@RequestBody CommentReplayEntity commentReplay) {
-        commentReplayService.save(commentReplay);
+//    @RequiresPermissions("product:spuimages:save")
+    public R save(@RequestBody SpuImagesEntity spuImages) {
+        spuImagesService.save(spuImages);
 
         return R.ok();
     }
@@ -67,9 +67,9 @@ public class CommentReplayController {
      * 修改
      */
     @RequestMapping("/update")
-//    @RequiresPermissions("product:commentreplay:update")
-    public R update(@RequestBody CommentReplayEntity commentReplay) {
-        commentReplayService.updateById(commentReplay);
+//    @RequiresPermissions("product:spuimages:update")
+    public R update(@RequestBody SpuImagesEntity spuImages) {
+        spuImagesService.updateById(spuImages);
 
         return R.ok();
     }
@@ -78,9 +78,9 @@ public class CommentReplayController {
      * 删除
      */
     @RequestMapping("/delete")
-//    @RequiresPermissions("product:commentreplay:delete")
+//    @RequiresPermissions("product:spuimages:delete")
     public R delete(@RequestBody Long[] ids) {
-        commentReplayService.removeByIds(Arrays.asList(ids));
+        spuImagesService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

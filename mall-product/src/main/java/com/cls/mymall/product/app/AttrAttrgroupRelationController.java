@@ -1,4 +1,4 @@
-package com.cls.mymall.product.controller;
+package com.cls.mymall.product.app;
 
 import java.util.Arrays;
 import java.util.Map;
