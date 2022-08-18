@@ -9,6 +9,8 @@ import com.cls.mymall.product.dao.CategoryDao;
 import com.cls.mymall.product.entity.CategoryEntity;
 import com.cls.mymall.product.service.CategoryBrandRelationService;
 import com.cls.mymall.product.service.CategoryService;
+import com.cls.mymall.product.vo.CatalogLevel2Vo;
+import com.cls.mymall.product.vo.CatalogLevel3Vo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +28,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<CategoryEntity> page = this.page(
-                new Query<CategoryEntity>().getPage(params),
-                new QueryWrapper<>()
-        );
+        IPage<CategoryEntity> page = this.page(new Query<CategoryEntity>().getPage(params), new QueryWrapper<>());
 
         return new PageUtils(page);
     }
@@ -39,11 +38,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
         List<CategoryEntity> entities = baseMapper.selectList(null);
 
-        return entities.stream()
-                .filter(categoryEntity -> categoryEntity.getParentCid() == 0)// 找到所有一级分类
-                .peek(menu -> menu.setChildren(getChildren(menu, entities)))
-                .sorted(Comparator.comparingInt(menu -> (menu.getSort() == null ? 0 : menu.getSort())))
-                .collect(Collectors.toList());
+        return entities.stream().filter(categoryEntity -> categoryEntity.getParentCid() == 0)// 找到所有一级分类
+                .peek(menu -> menu.setChildren(getChildren(menu, entities))).sorted(Comparator.comparingInt(menu -> (menu.getSort() == null ? 0 : menu.getSort()))).collect(Collectors.toList());
     }
 
     @Override
@@ -74,6 +70,30 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return super.list(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
     }
 
+    @Override
+    public Map<String, List<CatalogLevel2Vo>> getCatalogJson() {
+        List<CategoryEntity> CategoryList = super.list();
+        List<CategoryEntity> category2 = CategoryList.stream().filter(item -> item.getCatLevel() == 2).collect(Collectors.toList());
+        List<CategoryEntity> category3 = CategoryList.stream().filter(item -> item.getCatLevel() == 3).collect(Collectors.toList());
+        List<Long> level1Ids = CategoryList.stream().filter(item -> item.getCatLevel() == 1).map(CategoryEntity::getCatId).collect(Collectors.toList());
+
+        return level1Ids.stream().collect(Collectors.toMap(Object::toString, v -> category2.stream().filter(item -> item.getParentCid().equals(v)).map(cate2 -> {
+            CatalogLevel2Vo level2Vo = new CatalogLevel2Vo();
+            level2Vo.setId(cate2.getCatId().toString());
+            level2Vo.setName(cate2.getName());
+            level2Vo.setCatalog1Id(cate2.getParentCid().toString());
+            List<CatalogLevel3Vo> level3List = category3.stream().filter(item -> item.getParentCid().equals(cate2.getCatId())).map(cate3 -> {
+                CatalogLevel3Vo level3Vo = new CatalogLevel3Vo();
+                level3Vo.setId(cate3.getCatId().toString());
+                level3Vo.setName(cate3.getName());
+                level3Vo.setCatalog2Id(cate2.getCatId().toString());
+                return level3Vo;
+            }).collect(Collectors.toList());
+            level2Vo.setCatalog3List(level3List);
+            return level2Vo;
+        }).collect(Collectors.toList())));
+    }
+
     private List<Long> getAttrGroupPath(Long catelogId, List<Long> path) {
         CategoryEntity category = this.getById(catelogId);
         path.add(category.getCatId());
@@ -92,11 +112,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      */
     private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
 
-        return all.stream()
-                .filter(categoryEntity -> categoryEntity.getParentCid().equals(root.getCatId()))// 等于当前的夫id，即是孩子
-                .peek(categoryEntity -> categoryEntity.setChildren(getChildren(categoryEntity, all)))
-                .sorted(Comparator.comparingInt(menu -> (menu.getSort() == null ? 0 : menu.getSort())))
-                .collect(Collectors.toList());
+        return all.stream().filter(categoryEntity -> categoryEntity.getParentCid().equals(root.getCatId()))// 等于当前的夫id，即是孩子
+                .peek(categoryEntity -> categoryEntity.setChildren(getChildren(categoryEntity, all))).sorted(Comparator.comparingInt(menu -> (menu.getSort() == null ? 0 : menu.getSort()))).collect(Collectors.toList());
     }
 
 }
