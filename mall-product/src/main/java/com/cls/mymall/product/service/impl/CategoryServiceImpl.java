@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -80,37 +81,50 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public Map<String, List<CatalogLevel2Vo>> getCatalogJson() {
         String catalogJson = redisTemplate.opsForValue().get("catalogJson");
         if (StringUtils.isEmpty(catalogJson)) {
-            Map<String, List<CatalogLevel2Vo>> catalogJsonFromDb = getCatalogJsonFromDb();
-            String s = JSON.toJSONString(catalogJsonFromDb);
-            redisTemplate.opsForValue().set("catalogJson", s);
-            return catalogJsonFromDb;
+            System.out.println("缓存未命中。。。等待查询数据库");
+            return getCatalogJsonFromDb();
         } else {
+            System.out.println("缓存命中。。。");
             return JSON.parseObject(catalogJson, new TypeReference<Map<String, List<CatalogLevel2Vo>>>() {
             });
         }
     }
 
     public Map<String, List<CatalogLevel2Vo>> getCatalogJsonFromDb() {
-        List<CategoryEntity> CategoryList = super.list();
-        List<CategoryEntity> category2 = CategoryList.stream().filter(item -> item.getCatLevel() == 2).collect(Collectors.toList());
-        List<CategoryEntity> category3 = CategoryList.stream().filter(item -> item.getCatLevel() == 3).collect(Collectors.toList());
-        List<Long> level1Ids = CategoryList.stream().filter(item -> item.getCatLevel() == 1).map(CategoryEntity::getCatId).collect(Collectors.toList());
+        synchronized (this) {
+            String catalogJson = redisTemplate.opsForValue().get("catalogJson");
+            if (StringUtils.isEmpty(catalogJson)) {
+                System.out.println("缓存未命中。。。查询数据。。");
+                List<CategoryEntity> CategoryList = super.list();
+                List<CategoryEntity> category2 = CategoryList.stream().filter(item -> item.getCatLevel() == 2).collect(Collectors.toList());
+                List<CategoryEntity> category3 = CategoryList.stream().filter(item -> item.getCatLevel() == 3).collect(Collectors.toList());
+                List<Long> level1Ids = CategoryList.stream().filter(item -> item.getCatLevel() == 1).map(CategoryEntity::getCatId).collect(Collectors.toList());
 
-        return level1Ids.stream().collect(Collectors.toMap(Object::toString, v -> category2.stream().filter(item -> item.getParentCid().equals(v)).map(cate2 -> {
-            CatalogLevel2Vo level2Vo = new CatalogLevel2Vo();
-            level2Vo.setId(cate2.getCatId().toString());
-            level2Vo.setName(cate2.getName());
-            level2Vo.setCatalog1Id(cate2.getParentCid().toString());
-            List<CatalogLevel3Vo> level3List = category3.stream().filter(item -> item.getParentCid().equals(cate2.getCatId())).map(cate3 -> {
-                CatalogLevel3Vo level3Vo = new CatalogLevel3Vo();
-                level3Vo.setId(cate3.getCatId().toString());
-                level3Vo.setName(cate3.getName());
-                level3Vo.setCatalog2Id(cate2.getCatId().toString());
-                return level3Vo;
-            }).collect(Collectors.toList());
-            level2Vo.setCatalog3List(level3List);
-            return level2Vo;
-        }).collect(Collectors.toList())));
+                Map<String, List<CatalogLevel2Vo>> catalogJsonFromDb = level1Ids.stream().collect(Collectors.toMap(Object::toString, v -> category2.stream().filter(item -> item.getParentCid().equals(v)).map(cate2 -> {
+                    CatalogLevel2Vo level2Vo = new CatalogLevel2Vo();
+                    level2Vo.setId(cate2.getCatId().toString());
+                    level2Vo.setName(cate2.getName());
+                    level2Vo.setCatalog1Id(cate2.getParentCid().toString());
+                    List<CatalogLevel3Vo> level3List = category3.stream().filter(item -> item.getParentCid().equals(cate2.getCatId())).map(cate3 -> {
+                        CatalogLevel3Vo level3Vo = new CatalogLevel3Vo();
+                        level3Vo.setId(cate3.getCatId().toString());
+                        level3Vo.setName(cate3.getName());
+                        level3Vo.setCatalog2Id(cate2.getCatId().toString());
+                        return level3Vo;
+                    }).collect(Collectors.toList());
+                    level2Vo.setCatalog3List(level3List);
+                    return level2Vo;
+                }).collect(Collectors.toList())));
+
+                String s = JSON.toJSONString(catalogJsonFromDb);
+                redisTemplate.opsForValue().set("catalogJson", s, 1, TimeUnit.DAYS);
+
+                return catalogJsonFromDb;
+            }
+            System.out.println("缓存命中。。。");
+            return JSON.parseObject(catalogJson, new TypeReference<Map<String, List<CatalogLevel2Vo>>>() {
+            });
+        }
     }
 
     private List<Long> getAttrGroupPath(Long catelogId, List<Long> path) {
