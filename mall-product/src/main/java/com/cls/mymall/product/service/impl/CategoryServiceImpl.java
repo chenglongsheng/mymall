@@ -1,5 +1,7 @@
 package com.cls.mymall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,6 +14,7 @@ import com.cls.mymall.product.service.CategoryService;
 import com.cls.mymall.product.vo.CatalogLevel2Vo;
 import com.cls.mymall.product.vo.CatalogLevel3Vo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -25,6 +28,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -72,6 +78,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public Map<String, List<CatalogLevel2Vo>> getCatalogJson() {
+        String catalogJson = redisTemplate.opsForValue().get("catalogJson");
+        if (StringUtils.isEmpty(catalogJson)) {
+            Map<String, List<CatalogLevel2Vo>> catalogJsonFromDb = getCatalogJsonFromDb();
+            String s = JSON.toJSONString(catalogJsonFromDb);
+            redisTemplate.opsForValue().set("catalogJson", s);
+            return catalogJsonFromDb;
+        } else {
+            return JSON.parseObject(catalogJson, new TypeReference<Map<String, List<CatalogLevel2Vo>>>() {
+            });
+        }
+    }
+
+    public Map<String, List<CatalogLevel2Vo>> getCatalogJsonFromDb() {
         List<CategoryEntity> CategoryList = super.list();
         List<CategoryEntity> category2 = CategoryList.stream().filter(item -> item.getCatLevel() == 2).collect(Collectors.toList());
         List<CategoryEntity> category3 = CategoryList.stream().filter(item -> item.getCatLevel() == 3).collect(Collectors.toList());
