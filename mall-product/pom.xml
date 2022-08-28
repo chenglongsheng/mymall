@@ -18,6 +18,14 @@
         <spring-cloud.version>2020.0.4</spring-cloud.version>
     </properties>
     <dependencies>
+
+        <!-- 作为所有分布式锁，分布式对象等的框架 -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.cls.mymall</groupId>
             <artifactId>mall-common</artifactId>
