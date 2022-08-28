@@ -19,6 +19,11 @@
     </properties>
     <dependencies>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
         <!-- 作为所有分布式锁，分布式对象等的框架 -->
         <dependency>
             <groupId>org.redisson</groupId>
