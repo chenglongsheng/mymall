@@ -13,6 +13,8 @@ import com.cls.mymall.product.service.CategoryBrandRelationService;
 import com.cls.mymall.product.service.CategoryService;
 import com.cls.mymall.product.vo.CatalogLevel2Vo;
 import com.cls.mymall.product.vo.CatalogLevel3Vo;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -33,6 +35,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -84,12 +89,27 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         if (StringUtils.isEmpty(catalogJson)) {
             System.out.println("缓存未命中。。。等待查询数据库");
 //            return getCatalogJsonFromDbWithLocalLock();
-            return getCatalogJsonFromDbWithRedisLock();
+//            return getCatalogJsonFromDbWithRedisLock();
+            return getCatalogJsonFromDbWithRedisson();
         } else {
             System.out.println("缓存命中。。。");
             return JSON.parseObject(catalogJson, new TypeReference<Map<String, List<CatalogLevel2Vo>>>() {
             });
         }
+    }
+
+    public Map<String, List<CatalogLevel2Vo>> getCatalogJsonFromDbWithRedisson() {
+        RLock lock = redissonClient.getLock("catalogJson-lock");
+        lock.lock();
+        Map<String, List<CatalogLevel2Vo>> dataFromDb = null;
+        try {
+            dataFromDb = getDataFromDb();
+        } catch (Exception e) {
+
+        } finally {
+            lock.unlock();
+        }
+        return dataFromDb;
     }
 
     public Map<String, List<CatalogLevel2Vo>> getCatalogJsonFromDbWithRedisLock() {
