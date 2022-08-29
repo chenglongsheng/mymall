@@ -16,6 +16,7 @@ import com.cls.mymall.product.vo.CatalogLevel3Vo;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }
     }
 
+    // value分组，可以多个分组。key = "#root.method.name"设置方法名为键名
+    @Cacheable(value = "category", key = "#root.method.name")
     @Override
     public List<CategoryEntity> getLevel1Categories() {
         return super.list(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
